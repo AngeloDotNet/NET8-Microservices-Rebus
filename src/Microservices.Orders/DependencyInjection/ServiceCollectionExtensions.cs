@@ -1,6 +1,7 @@
 ﻿using Microservices.Orders.Handlers;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
+using Rebus.Serialization.Json;
 
 namespace Microservices.Orders.DependencyInjection;
 
@@ -13,6 +14,10 @@ public static class ServiceCollectionExtensions
         services.AddRebus(configure => configure
             .Transport(t => t.UseRabbitMq(rabbitConnection, "event-listener"))
             .Routing(r => r.TypeBased())
+
+            .Options(options => options.SetBusName("OrdersServiceBus"))
+            .Logging(logging => logging.Console(Rebus.Logging.LogLevel.Info))
+            .Serialization(serialize => serialize.UseSystemTextJson())
         );
 
         // registra automaticamente tutti gli handler in questo assembly
